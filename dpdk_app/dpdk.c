@@ -61,7 +61,7 @@ err_t dpdk_device_init(struct netif* netif) {
 	netif->linkoutput = dpdk_output;
 	netif->mtu = 1500;
 	netif->hwaddr_len = 6;
-	netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_IGMP; /*Not enabling ETHARP on this, so might need to change netif->output */
+	netif->flags = NETIF_FLAG_ETHERNET | NETIF_FLAG_BROADCAST | NETIF_FLAG_IGMP; /*Not enabling ETHARP on this, so might need to change netif->output */
 	
 	return ERR_OK
 	
@@ -104,7 +104,7 @@ err_t dpdk_input(struct rte_mbuf* m, struct netif* netif) {
 }
 
 err_t dpdk_output(struct netif *netif, struct pbuf *p) {
-
+	
 }
 
 void send_burst(struct lcore_conf* qconf, uint16_t len, uint8_t port) {
