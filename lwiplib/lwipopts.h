@@ -123,11 +123,11 @@ a lot of data that needs to be copied, this should be set high. */
 
 /* ---------- Pbuf options ---------- */
 /* PBUF_POOL_SIZE: the number of buffers in the pbuf pool. */
-#define PBUF_POOL_SIZE          120
+#define PBUF_POOL_SIZE          8192
 
 /* PBUF_POOL_BUFSIZE: the size of each pbuf in the pbuf pool. */
 
-#define PBUF_POOL_BUFSIZE      128   
+#define PBUF_POOL_BUFSIZE      0 //dpdk already allocated   
 /* PBUF_LINK_HLEN: the number of bytes that should be allocated for a
    link level header. */
 #define PBUF_LINK_HLEN          16 
@@ -173,7 +173,7 @@ a lot of data that needs to be copied, this should be set high. */
 
 /* ---------- ARP options ---------- */
 #define LWIP_ARP                0
-#define ARP_TABLE_SIZE          10
+#define ARP_TABLE_SIZE          1024
 #define ARP_QUEUEING            1
 
 /* ---------- IP options ---------- */

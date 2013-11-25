@@ -76,6 +76,7 @@ err_t dpdk_input(struct rte_mbuf* m, struct netif* netif) {
 
 	if (p != NULL) {
 		/*assuming 2048 bytes is enough for independent data packets*/
+		/*chaining not supported yet*/
 		p->payload = m->pkt.data;	
 	}	
 	else {
@@ -84,7 +85,9 @@ err_t dpdk_input(struct rte_mbuf* m, struct netif* netif) {
 		printf("Packet Dropped\n");	
 	}
 	ethhdr = (struct eth_hdr *)p->payload;
-
+	/* add etharp_output cache entries for each ip address seen here so later when sending
+	 * the reply, it doesn't have to do etharp_query and we don't have to keep track of
+	 * which MAC address is which IP address here - need to change the timer on the etharp         * cache entries so they don't expire, just for now while this is still pretty hacked 	 */
 	switch(htons(ethhdr->type)) {
 	case ETHTYPE_IP:
 	case ETHTYPE_ARP:
@@ -104,6 +107,7 @@ err_t dpdk_input(struct rte_mbuf* m, struct netif* netif) {
 }
 
 err_t dpdk_output(struct netif *netif, struct pbuf *p) {
+	struct rte_mbuf* m;
 	
 }
 
@@ -131,15 +135,24 @@ __attribute__((noreturn)) int dpdk_driver(__attribute__((unused)) void *dummy) {
 	lcoreid = rte_lcore_id();
 	qconf = &lcore_conf[lcoreid-START_CORE];
 
-	/* Set up LWIP */
-	
+	/* Set up LWIP for each core 
+ 	 * tcpip_init for LWIP was changed to not use mailboxes
+ 	 * currently just calls functions to initiate lwip, and */	
 	netif = tcpip_init(tcpip_init_done, NULL); 
 
 	while (1) {
+		/* Transmit
+                 * Commented out for now, because we finish everything in a loop so transmit
+                 * happens whenever the higher layer calls it
+                 * if batching is required later...then we'll have to figure a way for LWIP 
+                 * and DPDK to do free() properly together */
+		/*
 		if(qconf->tx_mbufs.len != 0) {
 			send_burst(qconf, qconf->tx_mbufs.len, 0);
 			qconf->tx_mbufs.len = 0;
 		}
+		*/
+		/* Receive */
 		nb_rx = rte_eth_rx_burst(0, qconf->rx_queue_id, pkts_burst, MAX_PKT_BURST);
 		for (j=0; j < nb_rx; j++) {
 			dpdk_input(pkts_burst[j], netif); 

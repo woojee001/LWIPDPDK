@@ -455,7 +455,7 @@
  * Also notice that this slows down input processing of every IP packet!
  */
 #ifndef ETHARP_TRUST_IP_MAC
-#define ETHARP_TRUST_IP_MAC             0
+#define ETHARP_TRUST_IP_MAC             1
 #endif
 
 /**
@@ -490,7 +490,7 @@
  * entries (using etharp_add_static_entry/etharp_remove_static_entry).
  */
 #ifndef ETHARP_SUPPORT_STATIC_ENTRIES
-#define ETHARP_SUPPORT_STATIC_ENTRIES   0
+#define ETHARP_SUPPORT_STATIC_ENTRIES  1 
 #endif
 
 

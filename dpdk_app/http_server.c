@@ -33,11 +33,12 @@ int main(int argc, char** argv) {
 	int ret = 0;
 	int lcoreid = 0;
         struct in_addr inaddr;
-
+	//initiate dpdk: cores, queues, memory, PCI, NIC
 	ret = init_dpdk(argc, argv);
 	argc -= ret;
 	argv += ret;	
 
+	//Give the LWIP stack IP address, gateway and netmask
 	inet_aton(IP_ADDR, &inaddr);
 	ipaddr.addr = inaddr.s_addr;
 	inet_aton(GATEWAY, &inaddr);
@@ -48,7 +49,7 @@ int main(int argc, char** argv) {
 	printf(" Host at %s mask %s gateway %s\n", IP_ADDR, NETMASK, GATEWAY);
 	printf(" Initializing LWIP TCP/IP Stack\n");
 	
-
+	//Launch function dpdk_driver on each core
 	rte_eal_mp_remote_launch(dpdk_driver, NULL, CALL_MASTER);
 	RTE_LCORE_FOREACH_SLAVE(lcoreid) {
 		if(rte_eal_wait_lcore(lcoreid) <0) 
